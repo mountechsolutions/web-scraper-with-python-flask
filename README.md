@@ -15,8 +15,8 @@ Data Source:
 * https://www.worldometers.info/coronavirus/country/nepal/
 * https://coronanepal.live/
 
-'''
+´´´
 from bs4 import BeautifulSoup
 page = requests.get(URL)
 soup = BeautifulSoup(page.content, 'html.parser')
-'''
+´´´
