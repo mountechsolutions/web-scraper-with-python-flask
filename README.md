@@ -15,7 +15,7 @@ Data Source:
 * https://www.worldometers.info/coronavirus/country/nepal/
 * https://coronanepal.live/
 
-### Explore Webscraping. Try this command ti begin
+### Explore Webscraping. Try this command to begin
 ```
 from bs4 import BeautifulSoup
 page = requests.get(URL)
