@@ -58,8 +58,9 @@ def obtain_corona_data(URL):
                'Tot Deaths per 1M pop', 'Total Tests', 'Tests per 1M pop', 'Population','Continent']
     df_curr.columns = columns
     df_curr = df_curr[~df_curr['Country'].isin(['Country,Other','Total:'])].reset_index(drop=True)
-    #df_curr = df_process(df_curr)
+    df_curr = df_process(df_curr)
     return df_curr
+df_curr =obtain_corona_data(URL)
 ```
 
 
