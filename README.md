@@ -20,6 +20,17 @@ Data Source:
 from bs4 import BeautifulSoup
 page = requests.get(URL)
 soup = BeautifulSoup(page.content, 'html.parser')
+table_data = soup.find_all('tr', style="")
+tds = []
+for td in table_data:
+  tds.append(td.text)
+  tds = [td.split('\n') for td in tds]
+  ths = tds[0]
+  l = len(ths)
+  thss = ths[1:l - 1]
+  tdsss = tds[1:]
+  tdsss = [tds[1:len(tds) - 1] for tds in tdsss]
+  df = pd.DataFrame(tdsss)
 ```
 
 
