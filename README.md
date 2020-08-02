@@ -61,6 +61,34 @@ def obtain_corona_data(URL):
     df_curr = df_process(df_curr)
     return df_curr
 df_curr =obtain_corona_data(URL)
+
+def nep2eng_num(nep_num):
+    d = {'१':'1','२':'2','३':'3','४':'4','५':'5','६':'6','७':'7','८':'8','९':'9','०':'0'}  
+    eng_num = ''.join(d[s] for s in nep_num if s in d.keys())
+    return eng_num
+
+def obtain_nepal_reg_data():
+    url_covnepal = 'https://covidnepal.live/'
+    page = requests.get(url_covnepal)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    res = soup.find_all('th')
+    vals = []
+    for r in res:
+        vals.append(r.text)
+    vals = np.asarray(vals)
+    vals = list(vals.reshape(int(len(vals)/5),5))
+    nep_reg_df = pd.DataFrame(vals[1:],columns=vals[0])
+    nep_reg_df.columns = ['States','Total Cases','Active Cases','Recovered Cases','Deaths']
+    nep_reg_df.index = nep_reg_df.index+1
+    nep_reg_df['States'] = nep_reg_df['States'].apply(lambda x:nr.romanize_text(x).capitalize() )
+    nep_reg_df['States'] = nep_reg_df['States'].apply(lambda x: 'State No. '+nep2eng_num(x) if nep2eng_num(x)!='' else x )
+    nep_reg_df['Total Cases'] = nep_reg_df['Total Cases'].apply(lambda x:nep2eng_num(x) )
+    nep_reg_df['Active Cases'] = nep_reg_df['Active Cases'].apply(lambda x:nep2eng_num(x) )
+    nep_reg_df['Recovered Cases'] = nep_reg_df['Recovered Cases'].apply(lambda x:nep2eng_num(x) )
+    nep_reg_df['Deaths'] = nep_reg_df['Deaths'].apply(lambda x:nep2eng_num(x) )
+    return nep_reg_df
+
+nepal_reg_data =obtain_nepal_reg_data()
 ```
 
 
