@@ -1,103 +1,320 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-     <script src="{{ url_for('static', filename='js/jquery-3.1.1.min.js') }}"></script>
-       <script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" media="all">
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" media="all">
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap3.min.css') }}" media="all">
-    <!-- Bootstrap CSS -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-
-    <title>covid-19 live</title>
-  </head>
-  <body>
-   <nav class="navbar navbar-dark bg-primary sticky-top">
-          <a class="navbar-brand" href="/">NWMLDS-2020 PROJECT 1 DEMO</a>
-   </nav>
+<!DOCTYPE html>
+<html>
+<head lang="en">
+   <!-- Required meta tags -->
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" media="all">
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" media="all">
+    <meta charset="UTF-8">
+    <title>NWMLDS-2020</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-dark bg-primary sticky-top">
+         <a class="navbar-brand" href="/">NWMLDS-2020 PROJECT 1 DEMO</a>
+  </nav>
 
 <div class="row row-cols-1 row-cols-md-3 ml-1 mr-1 mt-2 ">
-    <div class="col mb-4">
-      <div class="card bg-info">
-        <div class="card-body">
-          <h5 class="card-title card_head">Nepal Update</h5>
-            <ul class="list-group ">
-        <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
-          Total Test
-          <span class=" badge bg-warning badge-pill">0</span>
-        </li>
-        <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
-          Total Negative
-          <span class="badge bg-success badge-pill">0</span>
-        </li>
-        <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
-          Total Positive
-          <span class="badge bg-danger badge-pill">0</span>
-        </li>
-      </ul>
+   <div class="col mb-4">
+     <div class="card bg-info">
+       <div class="card-body">
+         <h5 class="card-title card_head">Nepal Update</h5>
+           <ul class="list-group ">
+       <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
+         Total Test
+         <span class=" badge bg-warning badge-pill">{{nepal_data['tested_total']}}</span>
+       </li>
+       <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
+         Total Cases
+         <span class="badge bg-success badge-pill">{{nepal_data['total_cases']}}</span>
+       </li>
+       <li class="text-white  bg-info list-group-item d-flex justify-content-between align-items-center">
+         Total Recover
+         <span class="badge bg-success badge-pill">{{nepal_data['total_recover']}}</span>
+       </li>
+       <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
+         Total Death
+         <span class="badge bg-danger badge-pill">{{nepal_data['total_death']}}</span>
+       </li>
+     </ul>
 
+       </div>
+   </div>
+       <div class="card mt-2 overflow-auto bg-info" style="height:257px;">
+     <div class="card-body ">
+
+       <h5 class="card-title ">Global News Update</h5>
+
+           {% for i in range(50)%}
+         <li>{{global_news[i]}}</li>
+         {% endfor %}
+
+     </div>
+   </div>
+ </div>
+ <div class="col mb-4">
+   <div class="card overflow-auto bg-info" style="height:580px;" >
+     <div class="card-body" >
+   <input class="form-control mr-sm-2 mb-1 bg-info" id="myInput" onkeyup="myFunction()" type="search" placeholder="Search for country..." aria-label="Search">
+         <table id="myTable" class="table table-hover  table-bordered">
+               <tr class="thead-dark sticky-top">
+                {% for key in table_data[0] %}
+                <th  style="width:2%;"> {{ key }} </th>
+                {% endfor %}
+               </tr>
+               {% for dict_item in table_data %}
+               <tr class="table-info">
+                {% for value in dict_item.values() %}
+                <td> {{ value }} </td>
+                {% endfor %}
+               </tr>
+               {% endfor %}
+               </table>
+     </div>
+   </div>
+ </div>
+ <div class="col mb-4">
+   <div class="card bg-info">
+     <div class="card-body">
+       <h5 class="card-title card_head">Global Update</h5>
+         <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
+   Total case
+   <span class="badge bg-warning badge-pill">{{globals_data[0]}}</span>
+ </li>
+ <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
+   Total Recover
+   <span class="badge bg-success badge-pill">{{globals_data[2]}}</span>
+ </li>
+ <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
+   Total Death
+   <span class="badge bg-danger badge-pill">{{globals_data[1]}}</span>
+ </li>
+     </div>
+   </div>
+     <div class="card mt-2 bg-info overflow-auto">
+     <div class="card-body" style="height:314px;">
+     
+        
+          <div id="piechart" style="height: 400"> <script>
+            var graphs = {{piechart_data | safe}};
+            Plotly.plot('piechart',graphs,{});
+        </script></div>
+       
+   
+     </div>
+     </div>
+   </div>
+ </div>
+</div>
+
+
+
+<div class="row  ml-1 mr-1 mt-2 " style="height:520px;">
+  <div class="col-sm-6" >
+    <div class="card" >
+      <div class="card-body" style="height:520px;">
+        <div id="bar-chart-grouped" style="height:500px;"> <script>
+          var graphs = {{plot | safe}};
+          Plotly.plot('bar-chart-grouped',graphs,{});
+      </script></div>
+       
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6" >
+    <div class="card" >
+      <div class="card-body" style="height:520px;" >
+        <label> Choose Country for more visualization....</label>
+    <select class="form-control" id ='selectdata'>
+        <option value="Nepal">Nepal</option>
+        <option value="China">China</option>
+        <option value="US">USA</option>
+    </select>
+      <div id="line-chart" style="height:430px;"  >
+          <script>
+            var graphs = {{line_data | safe}};
+            Plotly.plot('line-chart',graphs,{});
+        </script>
         </div>
-    </div>
-        <div class="card mt-2 overflow-auto bg-info" style="height:314px;">
-      <div class="card-body ">
-
-        <h5 class="card-title ">Global News Update</h5>
-
-            {% for i in range(50)%}
-          <li>{{global_news[i]}}</li>
-          {% endfor %}
-
-      </div>
-    </div>
-  </div>
-  <div class="col mb-4">
-    <div class="card overflow-auto bg-info" style="height:580px;" >
-      <div class="card-body" >
-         <h1>This is for global table</h1>
-      </div>
-    </div>
-  </div>
-  <div class="col mb-4">
-    <div class="card bg-info">
-      <div class="card-body">
-        <h5 class="card-title card_head">Global Update</h5>
-          <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
-    Total case
-    <span class="badge bg-warning badge-pill">0</span>
-  </li>
-  <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
-    Total Recover
-    <span class="badge bg-success badge-pill">0</span>
-  </li>
-  <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
-    Total Death
-    <span class="badge bg-danger badge-pill">0</span>
-  </li>
-      </div>
-    </div>
-      <div class="card mt-2 bg-info overflow-auto">
-      <div class="card-body" style="height:314px;">
-        <h5 class="card-title">select country in table for more update</h5>
-              <li id="country" class="bg-info list-group-item d-flex justify-content-between align-items-center">
-              </li>
-              <li id="totalcase" class="bg-info list-group-item d-flex justify-content-between align-items-center">
-              </li>
-            <li id='totaldeath' class="bg-info list-group-item d-flex justify-content-between align-items-center">
-              </li>
-                      <li id='totalrecover' class="bg-info list-group-item d-flex justify-content-between align-items-center">
-              </li>
-                      </li>
-                      <li id='todaycase' class="bg-info list-group-item d-flex justify-content-between align-items-center">
-              </li>
-                      </li>
-                      <li id='todaydeath' class="bg-info list-group-item d-flex justify-content-between align-items-center">
-              </li>
+         
+        </div>
+       
       </div>
     </div>
   </div>
 </div>
-  </body>
+
+
+
+
+
+
+<div class="row row-cols-1 row-cols-md-3 ml-1 mr-1 mt-2 ">
+  <div class="col mb-4">
+    <div class="card bg-info">
+      <div class="card-body">
+        <h5 class="card-title card_head">Forcast Data</h5>
+          <ul class="list-group ">
+      <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
+        Total Cases
+        <span class="badge bg-success badge-pill">{{nepal_data['total_cases']}}</span>
+      </li>
+      <li class="text-white  bg-info list-group-item d-flex justify-content-between align-items-center">
+        Total Recover
+        <span class="badge bg-success badge-pill">{{nepal_data['total_recover']}}</span>
+      </li>
+      <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
+        Total Death
+        <span class="badge bg-danger badge-pill">{{nepal_data['total_death']}}</span>
+      </li>
+    </ul>
+
+      </div>
+  </div>
+      <div class="card mt-2  bg-info" style="height:315px;">
+    <div class="card-body ">
+
+      <div style= "height: 400px;">
+        <div id="nepal_less_bar" style="height: 280px;"> <script>
+          var graphs = {{nepal_less_bar | safe}};
+          Plotly.plot('nepal_less_bar',graphs,{});
+      </script></div>
+      </div>
+
+         
+
+    </div>
+  </div>
+</div>
+<div class="col mb-4">
+  <div class="card overflow-auto bg-info" style="height:580px;" >
+    <div class="card-body" >
+  <input class="form-control mr-sm-2 mb-1 bg-info" id="myInput1" onkeyup="myFunction1()" type="search" placeholder="Search for country..." aria-label="Search">
+        <table id="myTable1" class="table table-hover  table-bordered">
+          <tr class="thead-dark sticky-top">
+            {% for key in table_data1[0] %}
+            <th  style="width:2%;"> {{ key }} </th>
+            {% endfor %}
+           </tr>
+           {% for dict_item in table_data1 %}
+           <tr class="table-info">
+            {% for value in dict_item.values() %}
+            <td> {{ value }} </td>
+            {% endfor %}
+           </tr>
+           {% endfor %}
+              
+              </table>
+    </div>
+  </div>
+</div>
+<div class="col mb-4">
+  <div class="card bg-info">
+    <div class="card-body">
+      <h5 class="card-title card_head" style="height:203px;">Provision Wise Imapct</h5>
+
+
+
+    </div>
+  </div>
+    <div class="card mt-2 bg-info" style="height: 315px;">
+    <div  class="card-body" style="height:314px;">
+    
+       <div style= "height: 400px;">
+          <div id="nepaltop" style="height: 280px;"> <script>
+            var graphs = {{nepal_top_bar | safe}};
+            Plotly.plot('nepaltop',graphs,{});
+        </script></div>
+       </div>
+  
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+<script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/plots.js') }}"></script>
+
+ </body>
+
+
+
 </html>
+
+
+<script>
+  function myFunction() {
+    // Declare variables
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+  
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[0];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>
+
+
+
+
+
+<script>
+  function myFunction1() {
+    // Declare variables
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput1");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable1");
+    tr = table.getElementsByTagName("tr");
+  
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[0];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>
+
+
+<script>
+  $('#selectdata').on('change',function(){
+
+$.ajax({
+    url: "/bar",
+    type: "GET",
+    contentType: 'application/json;charset=UTF-8',
+    data: {
+        'selected': document.getElementById('selectdata').value
+
+    },
+    dataType:"json",
+    success: function (data) {
+        Plotly.newPlot('line-chart', data );
+    }
+});
+})
+</script>
