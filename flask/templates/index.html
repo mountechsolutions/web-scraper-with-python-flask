@@ -24,11 +24,11 @@
            <ul class="list-group ">
        <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
          Total Test
-         <span class=" badge bg-warning badge-pill">{{nepal_data['tested_total']}}</span>
+         <span class=" badge bg-primary badge-pill">{{nepal_data['tested_total']}}</span>
        </li>
        <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
          Total Cases
-         <span class="badge bg-success badge-pill">{{nepal_data['total_cases']}}</span>
+         <span class="badge bg-warning badge-pill">{{nepal_data['total_cases']}}</span>
        </li>
        <li class="text-white  bg-info list-group-item d-flex justify-content-between align-items-center">
          Total Recover
@@ -93,11 +93,15 @@
  </li>
      </div>
    </div>
-     <div class="card mt-2 bg-info overflow-auto">
+     <div class="card mt-2 bg-info ">
      <div class="card-body" style="height:314px;">
-     
+      <select class="form-control" id ='selectcontinent'>
+          <option value="cases">Case</option>
+          <option value="deaths">Death</option>
+          <option value="recovered">Recover</option>
+      </select>
         
-          <div id="piechart" style="height: 400"> <script>
+          <div id="piechart" style="height:200px;" > <script>
             var graphs = {{piechart_data | safe}};
             Plotly.plot('piechart',graphs,{});
         </script></div>
@@ -111,7 +115,7 @@
 
 
 
-<div class="row  ml-1 mr-1 mt-2 " style="height:520px;">
+<div class="row  ml-1 mr-1 mt-2 " >
   <div class="col-sm-6" >
     <div class="card" >
       <div class="card-body" style="height:520px;">
@@ -159,16 +163,18 @@
           <ul class="list-group ">
       <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
         Total Cases
-        <span class="badge bg-success badge-pill">{{nepal_data['total_cases']}}</span>
+        <span class="badge bg-warning badge-pill">{{forcas}}</span>
       </li>
       <li class="text-white  bg-info list-group-item d-flex justify-content-between align-items-center">
         Total Recover
         <span class="badge bg-success badge-pill">{{nepal_data['total_recover']}}</span>
       </li>
-      <li class="text-white bg-info list-group-item d-flex justify-content-between align-items-center">
+
+      <li class="text-white  bg-info list-group-item d-flex justify-content-between align-items-center">
         Total Death
         <span class="badge bg-danger badge-pill">{{nepal_data['total_death']}}</span>
       </li>
+     
     </ul>
 
       </div>
@@ -212,28 +218,32 @@
 </div>
 <div class="col mb-4">
   <div class="card bg-info">
-    <div class="card-body">
-      <h5 class="card-title card_head" style="height:203px;">Provision Wise Imapct</h5>
+    <div class="card-body" style= "height:250pxpx;">
+      <div id="statepiechart" style="height:250px"> <script>
+        var graphs = {{state_piechart | safe}};
+        Plotly.plot('statepiechart',graphs,{});
+    </script></div>
 
 
 
     </div>
   </div>
-    <div class="card mt-2 bg-info" style="height: 315px;">
-    <div  class="card-body" style="height:314px;">
+    <div class="card mt-2 bg-info" >
+    <div  class="card-body" style="height:280px;">
     
-       <div style= "height: 400px;">
-          <div id="nepaltop" style="height: 280px;"> <script>
+     
+          <div id="nepaltop" style="height: 250px;"> <script>
             var graphs = {{nepal_top_bar | safe}};
             Plotly.plot('nepaltop',graphs,{});
         </script></div>
-       </div>
+      
   
     </div>
     </div>
   </div>
 </div>
 </div>
+
 
 
 
@@ -318,3 +328,25 @@ $.ajax({
 });
 })
 </script>
+
+
+
+<script>
+  $('#selectcontinent').on('change',function(){
+
+$.ajax({
+    url: "/continent",
+    type: "GET",
+    contentType: 'application/json;charset=UTF-8',
+    data: {
+        'selected': document.getElementById('selectcontinent').value
+
+    },
+    dataType:"json",
+    success: function (data) {
+        Plotly.newPlot('piechart', data );
+    }
+});
+})
+</script>
+

@@ -5,6 +5,8 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 import re
+import itertools
+import statsmodels.api as sm
 
 response_country = requests.get("https://disease.sh/v3/covid-19/countries")
 data_dic = response_country.json()
@@ -118,6 +120,9 @@ def Nepal_table():
     df=df[[1,2,4,5]][1:]
     columns_name = ['District','Total_Case','Total_Death','Total_Recover']
     df.columns = columns_name
+    df=df.sort_values(by="District", ascending=True)
+    provision=pd.read_csv('provision.csv')
+    df['State']=provision['State']
     df[['Total_Case','Total_Death','Total_Recover']]=df[['Total_Case','Total_Death','Total_Recover']].apply(pd.to_numeric)
     df=df.sort_values(by="Total_Case", ascending=False)
     df.reset_index(drop=True, inplace=True)
@@ -129,4 +134,42 @@ def Nepal_table():
     return filterdata
 
 
+def caseforcast():
+    response = requests.get('https://pomber.github.io/covid19/timeseries.json')
+    data = response.json()
+    aa=pd.DataFrame(data)
+    aa=(aa['Nepal'])
+    data=[]
+    for i in aa:
+        data.append(i)
+    df=pd.DataFrame(data)
+    df[['confirmed','deaths','recovered']]=df[['confirmed','deaths','recovered']].apply(pd.to_numeric)
+    df['date'] = pd.to_datetime(df['date'])
+    df.set_index('date',drop=True,inplace=True)
+    y=df['confirmed'][80:]
+    p = d = q = range(0, 2)
+    pdq = list(itertools.product(p, d, q))
+    seasonal_pdq = [(x[0], x[1], x[2], 5) for x in list(itertools.product(p, d, q))]
+    for param in pdq:
+        for param_seasonal in seasonal_pdq:
+            try:
+                mod = sm.tsa.statespace.SARIMAX(y,
+                                                order=param,
+                                                seasonal_order=param_seasonal,
+                                                enforce_stationarity=False,
+                                                enforce_invertibility=False)
 
+                results = mod.fit()
+            except:
+                continue
+    mod = sm.tsa.statespace.SARIMAX(y,
+                                order=(1, 1, 1),
+                                seasonal_order=(1, 1, 1, 5),
+                                enforce_stationarity=False,
+                                enforce_invertibility=False)
+
+    results = mod.fit()
+    pred = results.get_prediction(start=pd.to_datetime('2020-08-3') ,dynamic=False)
+    y_forecasted = pred.predicted_mean
+    data=int(round(y_forecasted))
+    return data

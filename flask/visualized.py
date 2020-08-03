@@ -23,13 +23,21 @@ def nepal_less():
                     ))
 
     fig.update_layout(
-        title='District have Less Impact ',
-        xaxis_tickfont_size=14,
-        yaxis=dict(
-            title='Total Number',
-            titlefont_size=16,
-            tickfont_size=14,
+
+         yaxis=dict(
+            title='Total Cases',
+            titlefont_size=8,
+            tickfont_size=8,
         ),
+        title='District have Less Impact According to Cases ',
+        xaxis_tickfont_size=8,
+        margin=dict(
+        l=0,
+        r=0,
+        b=0,
+        t=25,
+        pad=0
+    ),
         
         
         bargap=0.15, 
@@ -72,17 +80,24 @@ def nepal_top():
                     ))
 
     fig.update_layout(
-        title='Top Five District ',
-        xaxis_tickfont_size=14,
-        yaxis=dict(
-            title='Total Number',
-            titlefont_size=16,
-            tickfont_size=14,
+       yaxis=dict(
+            title='Total Cases',
+            titlefont_size=8,
+            tickfont_size=8,
         ),
+        title='District have High Impact According to Cases ',
+        xaxis_tickfont_size=10,
+         margin=dict(
+        l=0,
+        r=0,
+        b=0,
+        t=25,
+        pad=0
+    ),
+
         
         barmode='group',
-        bargap=0.15, 
-        bargroupgap=0.1 
+        
     )
     
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
@@ -121,13 +136,20 @@ def create_bar():
                     ))
 
     fig.update_layout(
-        title='Top 10 Country ',
+        title='Top 10 Country impacted by Covid-19 ',
         xaxis_tickfont_size=14,
         yaxis=dict(
-            title='Total Number',
+            title='Total Number of Cases',
             titlefont_size=16,
             tickfont_size=14,
         ),
+            margin=dict(
+        l=0,
+        r=0,
+        b=0,
+        t=25,
+        pad=0
+    ),
         
         barmode='group',
         bargap=0.15, 
@@ -144,30 +166,48 @@ def multiLine(name):
     Confirm = data['confirm']
     Death = data['death']
     recover = data['recover']
-    confirm = go.Scatter(
+
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
         x = Date,
         y = Confirm,
-        name='Confirm',
-
-    )
-    death = go.Scatter(
+        name='Confirm'))
+    fig.add_trace(go.Scatter(
         x = Date,
         y = Death,
         name='Death'
-    )
-    recover = go.Scatter(
+    ))
+    fig.add_trace(
+         go.Scatter(
         x = Date,
         y = recover,
         name='Recover'
     )
-    data = [confirm,death,recover]
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+    )
+
+    fig.update_layout(
+    xaxis_tickfont_size=14,
+    yaxis=dict(
+        title='Total Number of Cases',
+        titlefont_size=16,
+        tickfont_size=14,
+    ),
+            margin=dict(
+        l=0,
+        r=0,
+        b=15,
+        t=0,
+        pad=0
+    )),
+
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return graphJSON
 
-def piechart():
+def piechart(condition):
     table_data=global_table()
     df=pd.DataFrame(table_data)
-    a=df.groupby('continent')['cases'].sum()
+    a=df.groupby('continent')[condition].sum()
     continent=[]
     data=[]
     for j in a:
@@ -176,10 +216,48 @@ def piechart():
         continent.append(i)
     fig = go.Figure(data=[go.Pie(labels=continent, values=data)])
     fig.update_layout(
-        title='Continent Wise Imapact '
+    
+    height=250,
+    margin=dict(
+        l=0,
+        r=0,
+        b=0,
+        t=0,
+        pad=0
+    ),
+    # paper_bgcolor="LightSteelBlue",
     )
     
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return graphJSON
 
+def Statepiechart():
+    table_data=Nepal_table()
+    df=pd.DataFrame(table_data)
+    
+    a=df.groupby('State')['Total_Case'].sum()
+    State=[]
+    data=[]
+    for j in a:
+        data.append(j)
+    for i in a.keys():
+        State.append(i)
+    fig = go.Figure(data=[go.Pie(labels=State, values=data)])
+    fig.update_layout(
+    title='State Wise Covid Impact',
+    height=250,
+    margin=dict(
+        l=0,
+        r=0,
+        b=0,
+        t=25,
+        pad=0
+    ),
+  
+    # paper_bgcolor="LightSteelBlue",
+    )
+    
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON
+   
 
